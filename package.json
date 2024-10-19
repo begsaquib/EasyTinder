@@ -1,0 +1,16 @@
+{
+  "name": "easytinder",
+  "version": "1.0.0",
+  "description": "nodejs,javascript",
+  "main": "index.js",
+  "scripts": {
+    "start":" node src/app.js",
+    "dev":" nodemon src/app.js"
+    
+  },
+  "author": "Saquib Beg",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}
