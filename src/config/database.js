@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   await mongoose.connect(
-    "mongodb+srv://saquib_beg:ECQkKibPIH2FFvQK@nodetut001.vpkm5.mongodb.net/EasyTinder"
+    "mongodb+srv://saquib:Pyh7Z2pe7IWM2iMz@easytinder.cs5py.mongodb.net/EasyTinder"
   );
 };
 
@@ -14,6 +14,4 @@ connectDB()
     console.log("database connection failed");
   });
 
-  module.exports={
-    connectDB
-  }
+module.exports = {connectDB};
