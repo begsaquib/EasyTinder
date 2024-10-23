@@ -1,22 +1,18 @@
 const express = require("express");
-const { auth } = require("./middleware/auth");
+const { connectDB } = require("./config/database");
 
 const app = express();
 
-app.use("/admin",auth)
+connectDB()
+  .then(() => {
+    console.log("database connection Established...");
+    
+    app.listen(7777, () => {
+      console.log("Server is running perfectly...");
+    });
+  })
+  .catch((err) => {
+    console.log("database connection failed");
+  });
 
-app.get("/user",auth,(req,res)=>{
-  res.send("user data send")
-})
 
-app.get("/admin/getdata",(req,res,next)=>{
-  res.send("authorised user data recieved")
-  
-})
-app.get("/admin/deletedata",(req,res)=>{
-  res.send("authorised user data is deleted")
-})
-
-app.listen(7777, () => {
-  console.log("Server is running perfectly");
-});
