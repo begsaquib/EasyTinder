@@ -30,6 +30,30 @@ app.get("/user", async (req, res) => {
   }
 });
 
+//API to get a user by its id provided by the mongoose itself
+app.get("/findingById", async (req, res) => {
+  const userId = req.body._id;
+  try {
+    const user = await User.findById(userId); // there is one more fumction that is findone()  it gets back the first document which matches
+    res.send(user);
+  } catch {
+    res.status(400).send("Something went wrong");
+  }
+});
+
+//API to get a user by its id and then delete it
+app.delete("/user", async (req, res) => {
+  const userId = req.body.id;
+  try {
+    console.log(userId);
+
+    const user = await User.findByIdAndDelete(userId);
+    res.send("User Deleted succesfully");
+  } catch {
+    res.status(400).send("Something went wrong");
+  }
+});
+
 //API to get the feed that is all the users in the database
 app.get("/feed", async (req, res) => {
   const userEmail = req.body.emailId;
