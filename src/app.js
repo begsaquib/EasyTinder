@@ -41,6 +41,17 @@ app.get("/findingById", async (req, res) => {
   }
 });
 
+//API to get the feed that is all the users in the database
+app.get("/feed", async (req, res) => {
+  
+  try {
+    const user = await User.find({});
+    res.send(user);
+  } catch {
+    res.status(400).send("Something went wrong");
+  }
+});
+
 //API to get a user by its id and then delete it
 app.delete("/user", async (req, res) => {
   const userId = req.body.id;
@@ -54,12 +65,13 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-//API to get the feed that is all the users in the database
-app.get("/feed", async (req, res) => {
-  const userEmail = req.body.emailId;
+
+app.patch("/user", async (req, res) => {
+  const data=req.body;
+  const userId = req.body.id;
   try {
-    const user = await User.find({});
-    res.send(user);
+     await User.findByIdAndUpdate(userId,data);
+    res.send("User Updated succesfully");
   } catch {
     res.status(400).send("Something went wrong");
   }
