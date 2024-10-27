@@ -13,9 +13,8 @@ app.post("/signup", async (req, res) => {
     // Save the user to the database
     await user.save();
     res.status(200).send("Data saved successfully");
-  } catch (error) {
-    console.error("Error saving user: ", error);
-    res.status(500).send("Error saving data");
+  } catch (err) {
+    res.status(400).send("Error saving data: " + err.message);
   }
 });
 
@@ -43,7 +42,6 @@ app.get("/findingById", async (req, res) => {
 
 //API to get the feed that is all the users in the database
 app.get("/feed", async (req, res) => {
-  
   try {
     const user = await User.find({});
     res.send(user);
@@ -65,12 +63,12 @@ app.delete("/user", async (req, res) => {
   }
 });
 
-
+//API to get a user by its id and then update according to the user
 app.patch("/user", async (req, res) => {
-  const data=req.body;
+  const data = req.body;
   const userId = req.body.id;
   try {
-     await User.findByIdAndUpdate(userId,data);
+    await User.findByIdAndUpdate(userId, data);
     res.send("User Updated succesfully");
   } catch {
     res.status(400).send("Something went wrong");
