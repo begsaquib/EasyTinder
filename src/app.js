@@ -7,9 +7,15 @@ app.use(express.json());
 
 //API to save a user
 app.post("/signup", async (req, res) => {
+  const data = req.body;
   //   // Below I created a new instance of the user Model
   const user = new User(req.body);
   try {
+    if(data?.skill){
+      if (data?.skill.length > 10) {
+        throw new Error("Skills cant be more than 10");
+      }
+    }
     // Save the user to the database
     await user.save();
     res.status(200).send("Data saved successfully");
@@ -64,17 +70,40 @@ app.delete("/user", async (req, res) => {
 });
 
 //API to get a user by its id and then update according to the user
-app.patch("/user", async (req, res) => {
+app.patch("/user/:userId", async (req, res) => {
   const data = req.body;
-  const userId = req.body.id;
+  const userId = req.params?.userId;
+
   try {
-    await User.findByIdAndUpdate(userId, data,{
-      returnDocument:"after",
-      runValidators:true,
+    const Allow_Update = [
+      "userId",
+      "age",
+      "skill",
+      "about",
+      "password",
+      "gender",
+    ];
+
+    const isUpdateAllowed = Object.keys(data).every((k) =>
+      Allow_Update.includes(k)
+    );
+
+    if (!isUpdateAllowed) {
+      throw new Error("Update is not possible");
+    }
+    if(data?.skill){
+    if (data?.skill.length > 10) {
+      throw new Error("Skills cant be more than 10");
+    }
+  }
+
+    await User.findByIdAndUpdate(userId, data, {
+      returnDocument: "after",
+      runValidators: true,
     });
     res.send("User Updated succesfully");
-  } catch(err) {
-    res.status(400).send("Something went wrong" +err.message);
+  } catch (err) {
+    res.status(400).send("Update Failed: " + err.message);
   }
 });
 
