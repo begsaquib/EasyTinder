@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -17,10 +18,20 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("invalid email" + value);
+        }
+      },
     },
     password: {
       type: String,
       required: true,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Enter a strong password :" + value);
+        }
+      }
     },
     age: {
       type: Number,
@@ -41,6 +52,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default:
         "https://static.vecteezy.com/system/resources/thumbnails/001/840/618/small/picture-profile-icon-male-icon-human-or-people-sign-and-symbol-free-vector.jpg",
+        validate(value) {
+          if (!validator.isURL(value)) {
+            throw new Error("Enter a legit picture: " + value);
+          }
+        }
     },
     about: {
       type: String,
