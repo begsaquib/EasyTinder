@@ -1,26 +1,31 @@
 const express = require("express");
 const { connectDB } = require("./config/database");
 const User = require("./models/user");
+const bcrypt = require("bcrypt");
+const { validatingSignUpData } = require("./utils/validatingSignUpData");
+const { validatingPatchData } = require("./utils/validatingPatchData");
 const app = express();
 
 app.use(express.json());
 
 //API to save a user
 app.post("/signup", async (req, res) => {
-  const data = req.body;
-  //   // Below I created a new instance of the user Model
-  const user = new User(req.body);
   try {
-    if(data?.skill){
-      if (data?.skill.length > 10) {
-        throw new Error("Skills cant be more than 10");
-      }
-    }
-    // Save the user to the database
+    validatingSignUpData(req);
+    const { firstName, lastName, password, emailId } = req.body;
+    const passwordHash = await bcrypt.hash(password, 10);
+    console.log(passwordHash);
+    
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      password: passwordHash,
+    });
     await user.save();
     res.status(200).send("Data saved successfully");
   } catch (err) {
-    res.status(400).send("Error saving data: " + err.message);
+    res.status(400).send("ERR04 : " + err.message);
   }
 });
 
@@ -73,30 +78,8 @@ app.delete("/user", async (req, res) => {
 app.patch("/user/:userId", async (req, res) => {
   const data = req.body;
   const userId = req.params?.userId;
-
   try {
-    const Allow_Update = [
-      "userId",
-      "age",
-      "skill",
-      "about",
-      "password",
-      "gender",
-    ];
-
-    const isUpdateAllowed = Object.keys(data).every((k) =>
-      Allow_Update.includes(k)
-    );
-
-    if (!isUpdateAllowed) {
-      throw new Error("Update is not possible");
-    }
-    if(data?.skill){
-    if (data?.skill.length > 10) {
-      throw new Error("Skills cant be more than 10");
-    }
-  }
-
+    validatingPatchData(req)
     await User.findByIdAndUpdate(userId, data, {
       returnDocument: "after",
       runValidators: true,
